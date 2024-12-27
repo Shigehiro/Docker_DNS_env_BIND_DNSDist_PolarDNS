@@ -1,0 +1,129 @@
+[module]
+name = "alias"
+type = "feature"
+info = "random N aliases"
+desc = "Respond with N number of aliases containing random chain index (`alias####.yourdomain.com`). This feature supports CNAME/DNAME/HTTPS/SVCB/SRV/MX/NS/SPF(TXT) resource types. BEWARE: This could result in multiplication."
+author = "ivan.jedek@oryxlabs.com"
+category = "Aliases, loops and chains"
+
+code = '''
+           elif req.first_subdomain.startswith("alias"):
+              # Send multiple random aliases in any of CNAME/DNAME/HTTPS/SVCB/SRV/MX/NS/SPF(TXT) record types
+              # BEWARE: This could result in multiplication
+              answers = int(req.subdomains[1]) if req.subdomains[1].isnumeric() else 1
+              ### DNS header ########
+              buffer = prep_dns_header(b'\x84\x00', req.QURR, answers, 0, 0)
+              ### QUESTION SECTION ########
+              if resp.noq: buffer += convDom2Bin(req.full_domain) + req.type_bin + req.class_bin
+              ### ANSWER SECTION ########
+              doms = []
+              match req.type_str:
+                 case "DNAME":
+                    type = "DNAME"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("DNAME") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)      ## TTL
+                        buffer += struct.pack(">H", len(bindom))   ## Data length
+                        buffer += bindom                           ## DNAME value
+                        doms.append(dom)
+                 case "HTTPS":
+                    type = "HTTPS"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        data_len = 2+len(bindom)  # SvcPriority (2 bytes) + the target name
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("HTTPS") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)    ## TTL
+                        buffer += struct.pack(">H", data_len)    ## Data length
+                        buffer += struct.pack(">H", 0)           ## SvcPriority (0 means alias mode - RFC 9460)
+                        buffer += bindom                         ## TargetName
+                        doms.append(dom)
+                 case "SVCB":
+                    type = "SVCB"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        data_len = 2+len(bindom)  # SvcPriority (2 bytes) + the target name
+                        data_len = 2+len(bindom)  # SvcPriority (2 bytes) + the target name
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("SVCB") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)    ## TTL
+                        buffer += struct.pack(">H", data_len)    ## Data length
+                        buffer += struct.pack(">H", 0)           ## SvcPriority (0 means alias mode - RFC 9460)
+                        buffer += bindom                         ## TargetName
+                        doms.append(dom)
+                 case "SRV":
+                    type = "SRV"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        data_len = 2+len(bindom)  # SvcPriority (2 bytes) + the target name
+                        port = random.getrandbits(16)
+                        data_len = 2+2+2+len(bindom)  # Priority (2 bytes) + Weight (2 bytes) + Port (2 bytes) + Target domain
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("SRV") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)    ## TTL
+                        buffer += struct.pack(">H", data_len)    ## Data length
+                        buffer += struct.pack(">H", 0)           ## Priority
+                        buffer += struct.pack(">H", 0)           ## Weight
+                        buffer += struct.pack(">H", port)        ## Port
+                        buffer += bindom                         ## TargetName
+                        doms.append(dom)
+                 case "MX":
+                    type = "MX"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        data_len = 2+len(bindom)  # SvcPriority (2 bytes) + the target name
+                        data_len = 2+len(bindom)                 # Priority (2 bytes) + Target domain
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("MX") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)    ## TTL
+                        buffer += struct.pack(">H", data_len)    ## Data length
+                        buffer += struct.pack(">H", 0)           ## Priority
+                        buffer += bindom                         ## TargetName
+                        doms.append(dom)
+                 case "NS":
+                    type = "NS"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("NS") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)      ## TTL
+                        buffer += struct.pack(">H", len(bindom))   ## Data length
+                        buffer += bindom                           ## NS value
+                        doms.append(dom)
+                 case "TXT":
+                    type = "SPF(TXT)"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        data = "v=spf1 include:" + dom + " ~all"
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("TXT") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)      ## TTL
+                        buffer += struct.pack(">H", len(data)+1)   ## Data length (2B)
+                        buffer += struct.pack(">B", len(data))     ## TXT length (1B)
+                        buffer += data.encode("utf-8")             ## TXT SPF value
+                        doms.append(dom)
+                 case _:
+                    type = "CNAME"
+                    for i in range(answers):
+                        dom = name_fuzz(resp.nfz) if hasattr(resp, "nfz") else random_chain(req.full_domain)
+                        bindom = convDom2Bin(dom)
+                        data_len = 2+len(bindom)  # SvcPriority (2 bytes) + the target name
+                        buffer += b'\xc0\x0c' if resp.compress else convDom2Bin(req.full_domain)
+                        buffer += getTypeBin("CNAME") + getClassBin("IN")
+                        buffer += struct.pack(">L", resp.TTL)      ## TTL
+                        buffer += struct.pack(">H", len(bindom))   ## Data length
+                        buffer += bindom                           ## CNAME value
+                        doms.append(dom)
+              # log and send
+              log("%d %s aliases: %s" % (answers, type, ', '.join(map(str, doms[:3])) + (', ...' if answers > 3 else '')))
+              send_buf(self, buffer)
+              #####################################################################
+'''
