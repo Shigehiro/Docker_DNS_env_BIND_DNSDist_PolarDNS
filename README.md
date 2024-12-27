@@ -1,13 +1,20 @@
 # Set up internal DNS servers with BIND, dnsdist and PolarDNS
 
-Set up DNS servers with docker compose for the DNS testing.
+## Description
 
-- root * 2
-- com * 2, dnsdist is in front of them.
-- example.com * 4, dnsdist is in front of them.
-- sub[000000-099999].[example|broken].com * 4, dnsdist is in front of them
-- sub[000000-099999].sub[000000-099999].example.com * 4, dnsdist is in front of them
-- sub[000000-099999].sub[000000-099999].broken.com * 4, polardns handles queries. this domain is useful to test broken responses.
+Set up internal DNS servers with docker compose for DNS testing.
+
+- root * 2 (BIND * 2)
+- com * 2 (BIND * 2)
+  - dnsdist is in front of them.
+- example.com * 4 (BIND * 4)
+  - dnsdist is in front of them.
+- sub[000000-099999].[example|broken].com * 4 (BIND * 4)
+  - dnsdist is in front of them
+- sub[000000-099999].sub[000000-099999].example.com * 4 (BIND * 4)
+  - dnsdist is in front of them
+- sub[000000-099999].sub[000000-099999].broken.com * 4 (PolarDNS * 4)
+  - PolarDNS handles queries. this domain is useful to test broken responses.
 
 ## Genrate config
 
