@@ -4,7 +4,6 @@ zone_suffix = 'example.com'
 number_of_zone = 100000
 
 # Generate zone file for sub.example.com
-#with open('sub.sub.example.com.zone.file.txt', 'w') as f:
 with open('../bind_config/sub.sub.example.com/records/sub.sub.example.com.template.db', 'w') as f:
     conf_string = """
 $TTL 3600
@@ -28,7 +27,6 @@ ns02 IN AAAA 2001:db8:1::60
     f.write(conf_string)
 
 # Generate named.conf
-#with open('sub.sub.example.com_named.conf.txt', 'w') as f:
 with open('../bind_config/sub.sub.example.com/config/named.conf', 'w') as f:
     conf_string = """
 options {
@@ -50,7 +48,6 @@ zone  "." in {
     f.write(conf_string)
 
 # Generate named.conf for sub.sub.example.com
-#with open('sub.sub.example.com_named.conf.txt', 'a') as f:
 with open('../bind_config/sub.sub.example.com/config/named.conf', 'a') as f:
     for i in range(0,number_of_zone):
         domain_number = str(f"{i:06}")
