@@ -51,8 +51,8 @@ services:
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.31
-  dnsdist-com:
-    container_name: dnsdist-com
+  dnsdist-com01:
+    container_name: dnsdist-com01
     shm_size: 1g
     cap_add:
     - NET_ADMIN
@@ -64,15 +64,29 @@ services:
     ports:
     - "192.168.55.22:53:53/udp"
     - "192.168.55.22:53:53/tcp"
-    - "192.168.55.23:53:53/udp"
-    - "192.168.55.23:53:53/tcp"
     - "2001:db8:1::22:53:53/udp"
     - "2001:db8:1::22:53:53/tcp"
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.101
+  dnsdist-com02:
+    container_name: dnsdist-com02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_com.conf:/dnsdist.conf
+    ports:
+    - "192.168.55.23:53:53/udp"
+    - "192.168.55.23:53:53/tcp"
     - "2001:db8:1::23:53:53/udp"
     - "2001:db8:1::23:53:53/tcp"
     networks:
       internal_dns_net:
-        ipv4_address: 172.20.0.101
+        ipv4_address: 172.20.0.102
   bind-example01:
     container_name: bind-example01
     shm_size: 1g
@@ -121,8 +135,8 @@ services:
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.43
-  dnsdist-example:
-    container_name: dnsdist-example
+  dnsdist-example01:
+    container_name: dnsdist-example01
     shm_size: 1g
     cap_add:
     - NET_ADMIN
@@ -136,13 +150,27 @@ services:
     - "192.168.55.24:53:53/tcp"
     - "2001:db8:1::24:53:53/udp"
     - "2001:db8:1::24:53:53/tcp"
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.103
+  dnsdist-example02:
+    container_name: dnsdist-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_example.conf:/dnsdist.conf
+    ports:
     - "192.168.55.25:53:53/udp"
     - "192.168.55.25:53:53/tcp"
     - "2001:db8:1::25:53:53/udp"
     - "2001:db8:1::25:53:53/tcp"
     networks:
       internal_dns_net:
-        ipv4_address: 172.20.0.102
+        ipv4_address: 172.20.0.104
   bind-sub-example01:
     container_name: bind-sub-example01
     shm_size: 1g
@@ -191,8 +219,8 @@ services:
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.53
-  dnsdist-sub-example:
-    container_name: dnsdist-sub-example
+  dnsdist-sub-example01:
+    container_name: dnsdist-sub-example01
     shm_size: 1g
     cap_add:
     - NET_ADMIN
@@ -204,15 +232,29 @@ services:
     ports:
     - "192.168.55.28:53:53/udp"
     - "192.168.55.28:53:53/tcp"
-    - "192.168.55.29:53:53/udp"
-    - "192.168.55.29:53:53/tcp"
     - "2001:db8:1::28:53:53/udp"
     - "2001:db8:1::28:53:53/tcp"
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.105
+  dnsdist-sub-example02:
+    container_name: dnsdist-sub-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_example.conf:/dnsdist.conf
+    ports:
+    - "192.168.55.29:53:53/udp"
+    - "192.168.55.29:53:53/tcp"
     - "2001:db8:1::29:53:53/udp"
     - "2001:db8:1::29:53:53/tcp"
     networks:
       internal_dns_net:
-        ipv4_address: 172.20.0.103
+        ipv4_address: 172.20.0.106
   bind-sub-sub-example01:
     container_name: bind-sub-sub-example01
     shm_size: 1g
@@ -261,8 +303,8 @@ services:
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.63
-  dnsdist-sub-sub-example:
-    container_name: dnsdist-sub-sub-example
+  dnsdist-sub-sub-example01:
+    container_name: dnsdist-sub-sub-example01
     shm_size: 1g
     cap_add:
     - NET_ADMIN
@@ -274,15 +316,29 @@ services:
     ports:
     - "192.168.55.59:53:53/udp"
     - "192.168.55.59:53:53/tcp"
-    - "192.168.55.60:53:53/udp"
-    - "192.168.55.60:53:53/tcp"
     - "2001:db8:1::59:53:53/udp"
     - "2001:db8:1::59:53:53/tcp"
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.107
+  dnsdist-sub-sub-example02:
+    container_name: dnsdist-sub-sub-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_sub_example.conf:/dnsdist.conf
+    ports:
+    - "192.168.55.60:53:53/udp"
+    - "192.168.55.60:53:53/tcp"
     - "2001:db8:1::60:53:53/udp"
     - "2001:db8:1::60:53:53/tcp"
     networks:
       internal_dns_net:
-        ipv4_address: 172.20.0.104
+        ipv4_address: 172.20.0.108
   polardns01:
     container_name: polardns01
     build:
