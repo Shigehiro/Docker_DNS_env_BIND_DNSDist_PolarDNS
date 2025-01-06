@@ -4,3 +4,5 @@ bind_config/sub.example.com/records/*.db
 bind_config/sub.example.com/config/named.conf
 bind_config/sub.sub.example.com/records/*.db
 bind_config/sub.sub.example.com/config/named.conf
+bind_config/sub.sub.delay.com/records/*.db
+bind_config/sub.sub.delay.com/config/named.conf

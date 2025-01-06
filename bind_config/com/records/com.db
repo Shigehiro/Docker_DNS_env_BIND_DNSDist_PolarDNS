@@ -1,4 +1,3 @@
-
 $TTL 5
 @ IN SOA ns01 ns01 (
 2010062303
@@ -27,3 +26,10 @@ ns01.broken IN A 192.168.55.24
 ns02.broken IN A 192.168.55.25
 ns01.broken IN AAAA 2001:db8:1::24
 ns02.broken IN AAAA 2001:db8:1::25
+
+delay IN NS ns01.delay
+delay IN NS ns02.delay
+ns01.delay IN A 192.168.55.24
+ns02.delay IN A 192.168.55.25
+ns01.delay IN AAAA 2001:db8:1::24
+ns02.delay IN AAAA 2001:db8:1::25
