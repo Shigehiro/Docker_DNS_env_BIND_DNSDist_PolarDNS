@@ -1,5 +1,11 @@
 # Set up internal DNS servers with BIND, dnsdist and PolarDNS
 
+- [Set up internal DNS servers with BIND, dnsdist and PolarDNS](#set-up-internal-dns-servers-with-bind-dnsdist-and-polardns)
+  - [Description](#description)
+  - [Genrate config](#genrate-config)
+  - [Dig samples against PolarDNS (broken.com)](#dig-samples-against-polardns-brokencom)
+  - [Add latency on the dnsdist](#add-latency-on-the-dnsdist)
+
 ## Description
 
 Set up internal DNS servers with docker compose for DNS testing.
