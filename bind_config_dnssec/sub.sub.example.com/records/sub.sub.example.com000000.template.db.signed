@@ -1,0 +1,151 @@
+; File written on Thu Jan  9 21:50:50 2025
+; dnssec_signzone version 9.18.30-0ubuntu0.24.04.1-Ubuntu
+sub000000.sub000000.example.com. 3600 IN SOA ns01.sub000000.sub000000.example.com. ns01.sub000000.sub000000.example.com. (
+					2010062303 ; serial
+					3600       ; refresh (1 hour)
+					900        ; retry (15 minutes)
+					2592000    ; expire (4 weeks 2 days)
+					3600       ; minimum (1 hour)
+					)
+			3600	RRSIG	SOA 8 4 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					qkYkEajyf3VNVxi13kT+VZwB/qokaEwEe/g5
+					Y1eYaUlf4IQ2czRCuic88HyANAGx1GN0KBre
+					FuWXA/9Bn3EJZLxTjqRxS89m3cHhcT6ccxmy
+					VaT8zB88ojfibIjVg0XBLOHfJzY5K8/C59od
+					XvT18FAr+AW8GED7homYvzBTfAk= )
+			3600	NS	ns01.sub000000.sub000000.example.com.
+			3600	NS	ns02.sub000000.sub000000.example.com.
+			3600	RRSIG	NS 8 4 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					gl+doGy7VL+FQ/UT2hA20Ri7Umtl6A0mEzlu
+					QmKvv0iGpROEmbhVI9OC2gRjQM3DUzJO4wEA
+					WgR7r30wXRbHYGVrShzbO2ijxtThdK+cOru5
+					xuzi1Li1mOWXTjjQ8n1tWP02iA7alL1wANbr
+					ORyeSP5D1KE1Mz/82VoVqfcBD9A= )
+			3600	NSEC	*.sub000000.sub000000.example.com. NS SOA RRSIG NSEC DNSKEY
+			3600	RRSIG	NSEC 8 4 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					PTgPGU01EFFM1hAsvA7tj2uY3HsqFFLZAaG1
+					9qRZhWo1558fQzMr5GOu15T70NwDOlFTu16E
+					G2iouda0yD20MvACSZi3SZqoTOL+mEMad/PJ
+					6M143plAOGzGeRpuYby2JPNorqG69bPwviuu
+					1/evSyt+F4egLZhuVQpvEmnZPfA= )
+			3600	DNSKEY	256 3 8 (
+					AwEAAa5nePXXia3Da8S5OjO+y+J43zwnKX4S
+					m9aYLDbfU/4f0SkIR5RKsk8tAybRBvtYxHeU
+					qT0SvYLcj5oRBj6Y6M9oD6oJrsBz+966au76
+					XsrttGeE1GF2muCE7UNDHscOqRzk7b42oyC5
+					K3oYQQFFil2S2yl4hBPHS27XhV5SLTtF
+					) ; ZSK; alg = RSASHA256 ; key id = 9603
+			3600	DNSKEY	257 3 8 (
+					AwEAAbSmz1F7qJ0yav7TLHne1wdL6sf51auP
+					HWzx4TQPIuRtu7pxVvV8XqRe/+iZDAQSOBR/
+					CSwO0EghlEQ53KzrRcJYZV3YD67/StpfZhYl
+					EMDE/ox4sSlrxd9ugxbpIBpIAmgWahf5CuRb
+					ZHHFB8KFL9Kw4w7YLnYnHpTlHdZygm/Us8df
+					kOTq6l5dFD11CiZ268biIzByLCxLLBw7fe3T
+					ghlf6rbmRAByV4HdYMc7l+SyX10COcDrfSq0
+					bBU4ZwEoPv2yaPXI8MKBTB14rzY/0KnhH4Up
+					tu61G9CAiB/k3qko/RqzIRpvNAwfU5gqJX/J
+					nGXCwson/BYgZWpG1rSe9Cc=
+					) ; KSK; alg = RSASHA256 ; key id = 48617
+			3600	RRSIG	DNSKEY 8 4 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					i/rvpJpBBUKmRREq1mikEaSvTBoyz9hqAsQA
+					wtZxbxh5EX0mdqBje3Ndnf//7ziJF1IaiV6x
+					lOrpA3adM6FIh7jMuWEN9vjlw5sVkdfKgGTo
+					23X64RJ4v6SxWvON+EGGvr5bWnpl6E39n251
+					YqX5rYYJ+4nOQXZKmdSnhu5GObA= )
+			3600	RRSIG	DNSKEY 8 4 3600 (
+					20501231000000 20250109115050 48617 sub000000.sub000000.example.com.
+					POl5UfWtic5xctX7YAgHv075BbZoiZjNs97M
+					EpZzRTm3xsjFcJiNBpGH9sNtfh4Ht8cqe1HR
+					8h1q/aq2DqWloCYqBxQoJ/4iEtgZ2Ylw7obl
+					NeexN//f2nSYSPqQxvcuMBmdSoBsqfGL7+Vb
+					3R5hdhCHyDNh7iIUs120ou1reDdFK9eXZGGN
+					Flt4YXJIqhXRvat80J9aMsRTP/9ntO8YV8eA
+					2Np3n7i8qzkT6jFQHoMfaDOMfKN5jmXO63ey
+					g25M5e16wtyfdFSd83k+BEUxk94Ks8p5048Q
+					t3X4UHNtILTFJKD+hqM0XR95xk4fASGhBGBG
+					1r2Nh4jg853qDvvudQ== )
+ns01.sub000000.sub000000.example.com. 3600 IN A	192.168.55.59
+			3600	RRSIG	A 8 5 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					BT3LAFrPCrkB9ZLVqKMjXtjHUDUqt+M2bwRY
+					SedU6yminzi/lFMXT9epTO4kJDjFlOLFSJFT
+					R1bHrsOM8mRhpBv/Z3A7JY0AV9A+aFTMqwcp
+					89IvyarR+AJNx34KqS9+OmgRNG0rejysIiIJ
+					Ddi8gNveVbonLwNUQt6BNqGtnmk= )
+			3600	AAAA	2001:db8:1::59
+			3600	RRSIG	AAAA 8 5 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					D7Ncbm3M2NSMGCMVm1cDAxBycHEaDQnCZ37x
+					5NodlMZgXCwt0F6GQSV3aqrL2Y4zLM7LI9fx
+					BPpq3e0d33lvsScIW1GML2o+TuRkVjHk7ukN
+					yIsYVmN/cQqN7vhFeem+aqagQq/rkxyY0aBq
+					18nuAHqVcVJDZwvIiO28vbBGpUw= )
+			3600	NSEC	ns02.sub000000.sub000000.example.com. A AAAA RRSIG NSEC
+			3600	RRSIG	NSEC 8 5 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					TmR0M4qeL7AK4BQ65E75akIPBU26BJ07iETa
+					HSieqntjenc0VHrW1IlqrpxK0f2rGASmN49O
+					whXADwlvV4hdVqfJDccGIm9XaGzagSFtzSRp
+					rDnkuaz6L8anf8rS5rkhuRCuRN7BKFv1ca8F
+					uEErJYdIgc4rWuzmj4RW4huA+oc= )
+ns02.sub000000.sub000000.example.com. 3600 IN A	192.168.55.60
+			3600	RRSIG	A 8 5 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					N0uYAHZljaMVKVUH/NnPEEcLt5azM2x0Ih2V
+					ANjEbg3OPzp/C0cAcJJEkw1Th0MHYiL8oaa8
+					EugsVw7Mqx9p7mb8vX2mAZkkZYkw72DeTIAH
+					7ijVPT70S+YW6KZbWDzyDGEgyWpMFHMz4Vk4
+					KH3ggODupPgx9k1hnssrkQ87Aus= )
+			3600	AAAA	2001:db8:1::60
+			3600	RRSIG	AAAA 8 5 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					PTGzoV6WbaK5BisP1c0f65D+qEUi9+uZjLEC
+					wtkwZ3vqd6g1+9jZLrv3NK8iTepQ93YKf0RW
+					LA8mxiL+cRE6O0imi1ZDeHA02zEo3hzXdMbh
+					mpMMS9bOmrT3ue7R3RAuL9VvRNEsjx/ELkZN
+					mL04yBfMnNMKlvtpBfcpxHC/cmk= )
+			3600	NSEC	sub000000.sub000000.example.com. A AAAA RRSIG NSEC
+			3600	RRSIG	NSEC 8 5 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					BI1vQX2GJbOcABCp8n01/aQlvKKaQ6Depn9T
+					F5DFW0TsQ4sQxeyxZ3FNomF22uLWcUbFQ5pk
+					jt8CCrq572oO0MGkwB7fXELMwAOOlx4uZ3ep
+					cNj4SS8E0UO2h0CvgvwulJvQGcIeO4oLDJe8
+					Nl7208kg9kizkw3VDVTSHYHt/Uo= )
+*.sub000000.sub000000.example.com. 86400 IN A 127.0.0.1
+			86400	RRSIG	A 8 4 86400 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					SISS9f61byFRQBfOINSTsu0T/8WSGoc1xwbQ
+					fBkisAxxoz3FG++vGPm7m9WkGMKe1YaC8VjZ
+					/JP8sWksdMlgCnjKZjuduft+50iIaK095buE
+					ZQiOyXS/4Hvtk+/1MyfaQ3PmyuO20UMMznA+
+					QuuzKFgY7UOBoJQ1sgEErhsbYKE= )
+			86400	TXT	"'hello'"
+			86400	RRSIG	TXT 8 4 86400 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					I4qsovWoDZz3sE7UfKWGqmZeTr2P1b3E4q3X
+					k/kn8yjA6FQE11Aauvwg14DtM6MHFOdNa1HC
+					UTK0KRejpYmCOaJwkJUHHQZUw08siTceBMX4
+					r5jYejhLkqfJGtDqvqJ8cKI/ptXsAkGvnzML
+					2WmrAsoECtWsPFSSIyLc1LogOK8= )
+			86400	AAAA	::1
+			86400	RRSIG	AAAA 8 4 86400 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					iDlWfNsPnj4aJkaXS8qg0NiDnLi27BcrxxUz
+					jELYtuq9WaORV9riGTfjMXLHvnDxw3G3Wtin
+					gstRcRMFdxMfMy3tVMfO87U8dJtPdODnyFnk
+					HRr5E6iWdLRqyex3/tWTobSwDE2HIqT3u+zw
+					EKRD2hTu1FOx42temUEkidvuuJ0= )
+			3600	NSEC	ns01.sub000000.sub000000.example.com. A TXT AAAA RRSIG NSEC
+			3600	RRSIG	NSEC 8 4 3600 (
+					20501231000000 20250109115050 9603 sub000000.sub000000.example.com.
+					a+joTM45fM6pBRatx2u2I3Pn1WKJnzCqrJFN
+					3l57RaHnQ6P5c1bHOUqBFchwgdmXR3BbPjul
+					Ip7DbAxy4242r9THbhmTtRpEkTtqVEJtKEW/
+					/RBVylnJXQrAEoST8jfHen86mdaD1bHba8ZU
+					kBDsfLMzGiZn/opNT7v/J3zC6sI= )

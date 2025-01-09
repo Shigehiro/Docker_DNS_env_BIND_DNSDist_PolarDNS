@@ -1,0 +1,496 @@
+services:
+  bind-root01:
+    container_name: bind-root01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/root/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/root/records/:/var/lib/bind 
+    ports:
+    - "192.168.55.20:53:53/udp"
+    - "192.168.55.20:53:53/tcp"
+    - "2001:db8:1::20:53:53/udp"
+    - "2001:db8:1::20:53:53/tcp"
+  bind-root02:
+    container_name: bind-root02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/root/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/root/records/:/var/lib/bind 
+    ports:
+    - "192.168.55.21:53:53/udp"
+    - "192.168.55.21:53:53/tcp"
+    - "2001:db8:1::21:53:53/udp"
+    - "2001:db8:1::21:53:53/tcp"
+  bind-com01:
+    container_name: bind-com01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.30
+  bind-com02:
+    container_name: bind-com02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.31
+  dnsdist-com01:
+    container_name: dnsdist-com01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_com01.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.22:53:53/udp"
+#    - "192.168.55.22:53:53/tcp"
+#    - "2001:db8:1::22:53:53/udp"
+#    - "2001:db8:1::22:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.101
+  dnsdist-com02:
+    container_name: dnsdist-com02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_com02.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.23:53:53/udp"
+#    - "192.168.55.23:53:53/tcp"
+#    - "2001:db8:1::23:53:53/udp"
+#    - "2001:db8:1::23:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.102
+  bind-example01:
+    container_name: bind-example01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/example.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.40
+  bind-example02:
+    container_name: bind-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/example.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.41
+#  bind-example03:
+#    container_name: bind-example03
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config/example.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.42
+#  bind-example04:
+#    container_name: bind-example04
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config/example.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.43
+  dnsdist-example01:
+    container_name: dnsdist-example01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_example01.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.24:53:53/udp"
+#    - "192.168.55.24:53:53/tcp"
+#    - "2001:db8:1::24:53:53/udp"
+#    - "2001:db8:1::24:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.103
+  dnsdist-example02:
+    container_name: dnsdist-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_example02.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.25:53:53/udp"
+#    - "192.168.55.25:53:53/tcp"
+#    - "2001:db8:1::25:53:53/udp"
+#    - "2001:db8:1::25:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.104
+  bind-sub-example01:
+    container_name: bind-sub-example01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.50
+  bind-sub-example02:
+    container_name: bind-sub-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.51
+#  bind-sub-example03:
+#    container_name: bind-sub-example03
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.52
+#  bind-sub-example04:
+#    container_name: bind-sub-example04
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.53
+  dnsdist-sub-example01:
+    container_name: dnsdist-sub-example01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_example01.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.28:53:53/udp"
+#    - "192.168.55.28:53:53/tcp"
+#    - "2001:db8:1::28:53:53/udp"
+#    - "2001:db8:1::28:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.105
+  dnsdist-sub-example02:
+    container_name: dnsdist-sub-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_example02.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.29:53:53/udp"
+#    - "192.168.55.29:53:53/tcp"
+#    - "2001:db8:1::29:53:53/udp"
+#    - "2001:db8:1::29:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.106
+  bind-sub-sub-example01:
+    container_name: bind-sub-sub-example01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config_dnssec/sub.sub.example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/sub.sub.example.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.60
+  bind-sub-sub-example02:
+    container_name: bind-sub-sub-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config_dnssec/sub.sub.example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/sub.sub.example.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.61
+#  bind-sub-sub-example03:
+#    container_name: bind-sub-sub-example03
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config_dnssec/sub.sub.example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/sub.sub.example.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.62
+#  bind-sub-sub-example04:
+#    container_name: bind-sub-sub-example04
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config_dnssec/sub.sub.example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/sub.sub.example.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.63
+  dnsdist-sub-sub-example01:
+    container_name: dnsdist-sub-sub-example01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_sub_example01.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.59:53:53/udp"
+#    - "192.168.55.59:53:53/tcp"
+#    - "2001:db8:1::59:53:53/udp"
+#    - "2001:db8:1::59:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.107
+  dnsdist-sub-sub-example02:
+    container_name: dnsdist-sub-sub-example02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_sub_example02.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.60:53:53/udp"
+#    - "192.168.55.60:53:53/tcp"
+#    - "2001:db8:1::60:53:53/udp"
+#    - "2001:db8:1::60:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.108
+  polardns01:
+    container_name: polardns01
+    build:
+      context: ./Docker_build/PolarDNS
+      dockerfile: Dockerfile
+    image: polardns
+    volumes:
+      - ./bind_config/PolarDNS/polardns.toml:/usr/src/app/polardns.toml
+    ports:
+    - "192.168.55.49:53:53/udp"
+    - "192.168.55.49:53:53/tcp"
+    - "2001:db8:1::49:53:53/udp"
+    - "2001:db8:1::49:53:53/tcp"
+  polardns02:
+    container_name: polardns02
+    build:
+      context: ./Docker_build/PolarDNS
+      dockerfile: Dockerfile
+    image: polardns
+    volumes:
+      - ./bind_config/PolarDNS/polardns.toml:/usr/src/app/polardns.toml
+    ports:
+    - "192.168.55.50:53:53/udp"
+    - "192.168.55.50:53:53/tcp"
+    - "2001:db8:1::50:53:53/udp"
+    - "2001:db8:1::50:53:53/tcp"
+  polardns03:
+    container_name: polardns03
+    build:
+      context: ./Docker_build/PolarDNS
+      dockerfile: Dockerfile
+    image: polardns
+    volumes:
+      - ./bind_config/PolarDNS/polardns.toml:/usr/src/app/polardns.toml
+    ports:
+    - "192.168.55.51:53:53/udp"
+    - "192.168.55.51:53:53/tcp"
+    - "2001:db8:1::51:53:53/udp"
+    - "2001:db8:1::51:53:53/tcp"
+  polardns04:
+    container_name: polardns04
+    build:
+      context: ./Docker_build/PolarDNS
+      dockerfile: Dockerfile
+    image: polardns
+    volumes:
+      - ./bind_config/PolarDNS/polardns.toml:/usr/src/app/polardns.toml
+    ports:
+    - "192.168.55.52:53:53/udp"
+    - "192.168.55.52:53:53/tcp"
+    - "2001:db8:1::52:53:53/udp"
+    - "2001:db8:1::52:53:53/tcp"
+  dnsdist-sub-sub-delay01:
+    container_name: dnsdist-sub-sub-delay01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_sub_delay01.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.61:53:53/udp"
+#    - "192.168.55.61:53:53/tcp"
+#    - "2001:db8:1::61:53:53/udp"
+#    - "2001:db8:1::61:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.109
+  dnsdist-sub-sub-delay02:
+    container_name: dnsdist-sub-sub-delay02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    build:
+      context: ./Docker_build/DNSDist
+      dockerfile: Dockerfile
+    volumes:
+      - ./bind_config/dnsdist/dnsdist_sub_sub_delay02.conf:/dnsdist.conf
+    network_mode: "host"
+#    ports:
+#    - "192.168.55.62:53:53/udp"
+#    - "192.168.55.62:53:53/tcp"
+#    - "2001:db8:1::62:53:53/udp"
+#    - "2001:db8:1::62:53:53/tcp"
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.110
+  bind-sub-sub-delay01:
+    container_name: bind-sub-sub-delay01
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config_dnssec/sub.sub.delay.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/sub.sub.delay.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.64
+  bind-sub-sub-delay02:
+    container_name: bind-sub-sub-delay02
+    shm_size: 1g
+    cap_add:
+    - NET_ADMIN
+    image: docker.io/ubuntu/bind9:latest
+    volumes:
+      - ./bind_config_dnssec/sub.sub.delay.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/sub.sub.delay.com/records/:/var/lib/bind 
+    networks:
+      internal_dns_net:
+        ipv4_address: 172.20.0.65
+#  bind-sub-sub-delay03:
+#    container_name: bind-sub-sub-delay03
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config_dnssec/sub.sub.delay.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/sub.sub.delay.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.66
+#  bind-sub-sub-delay04:
+#    container_name: bind-sub-sub-delay04
+#    shm_size: 1g
+#    cap_add:
+#    - NET_ADMIN
+#    image: docker.io/ubuntu/bind9:latest
+#    volumes:
+#      - ./bind_config_dnssec/sub.sub.delay.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/sub.sub.delay.com/records/:/var/lib/bind 
+#    networks:
+#      internal_dns_net:
+#        ipv4_address: 172.20.0.67
+networks:
+  internal_dns_net:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1

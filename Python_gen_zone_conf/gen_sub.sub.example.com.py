@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 zone_suffix = 'example.com'
-number_of_zone = 100000
+number_of_zone = 10
 
 # Generate zone file for sub.example.com
 with open('../bind_config/sub.sub.example.com/records/sub.sub.example.com.template.db', 'w') as f:

@@ -1,0 +1,6 @@
+.                        3600000  IN  NS    X.ROOT-SERVERS.NET.
+.                        3600000  IN  NS    Y.ROOT-SERVERS.NET.
+X.ROOT-SERVERS.NET.      3600000      A     192.168.55.20
+X.ROOT-SERVERS.NET.      3600000      AAAA  2001:db8:1::40 
+Y.ROOT-SERVERS.NET.      3600000      A     192.168.55.21
+Y.ROOT-SERVERS.NET.      3600000      AAAA  2001:db8:1::41
