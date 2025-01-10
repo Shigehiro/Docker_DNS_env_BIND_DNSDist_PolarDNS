@@ -6,8 +6,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/root/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/root/records/:/var/lib/bind 
+      - ./bind_config_dnssec/root/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/root/records/:/var/lib/bind 
     ports:
     - "192.168.55.20:53:53/udp"
     - "192.168.55.20:53:53/tcp"
@@ -20,8 +20,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/root/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/root/records/:/var/lib/bind 
+      - ./bind_config_dnssec/root/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/root/records/:/var/lib/bind 
     ports:
     - "192.168.55.21:53:53/udp"
     - "192.168.55.21:53:53/tcp"
@@ -34,8 +34,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/com/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/com/records/:/var/lib/bind 
+      - ./bind_config_dnssec/com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/com/records/:/var/lib/bind 
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.30
@@ -46,8 +46,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/com/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/com/records/:/var/lib/bind 
+      - ./bind_config_dnssec/com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/com/records/:/var/lib/bind 
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.31
@@ -96,8 +96,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/example.com/records/:/var/lib/bind 
+      - ./bind_config_dnssec/example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/example.com/records/:/var/lib/bind 
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.40
@@ -108,8 +108,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/example.com/records/:/var/lib/bind 
+      - ./bind_config_dnssec/example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/example.com/records/:/var/lib/bind 
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.41
@@ -120,8 +120,8 @@ services:
 #    - NET_ADMIN
 #    image: docker.io/ubuntu/bind9:latest
 #    volumes:
-#      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
-#      - ./bind_config/example.com/records/:/var/lib/bind 
+#      - ./bind_config_dnssec/example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/example.com/records/:/var/lib/bind 
 #    networks:
 #      internal_dns_net:
 #        ipv4_address: 172.20.0.42
@@ -132,8 +132,8 @@ services:
 #    - NET_ADMIN
 #    image: docker.io/ubuntu/bind9:latest
 #    volumes:
-#      - ./bind_config/example.com/config/named.conf:/etc/bind/named.conf
-#      - ./bind_config/example.com/records/:/var/lib/bind 
+#      - ./bind_config_dnssec/example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/example.com/records/:/var/lib/bind 
 #    networks:
 #      internal_dns_net:
 #        ipv4_address: 172.20.0.43
@@ -182,8 +182,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+      - ./bind_config_dnssec/sub.example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/sub.example.com/records/:/var/lib/bind 
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.50
@@ -194,8 +194,8 @@ services:
     - NET_ADMIN
     image: docker.io/ubuntu/bind9:latest
     volumes:
-      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
-      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+      - ./bind_config_dnssec/sub.example.com/config/named.conf:/etc/bind/named.conf
+      - ./bind_config_dnssec/sub.example.com/records/:/var/lib/bind 
     networks:
       internal_dns_net:
         ipv4_address: 172.20.0.51
@@ -206,8 +206,8 @@ services:
 #    - NET_ADMIN
 #    image: docker.io/ubuntu/bind9:latest
 #    volumes:
-#      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
-#      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+#      - ./bind_config_dnssec/sub.example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/sub.example.com/records/:/var/lib/bind 
 #    networks:
 #      internal_dns_net:
 #        ipv4_address: 172.20.0.52
@@ -218,8 +218,8 @@ services:
 #    - NET_ADMIN
 #    image: docker.io/ubuntu/bind9:latest
 #    volumes:
-#      - ./bind_config/sub.example.com/config/named.conf:/etc/bind/named.conf
-#      - ./bind_config/sub.example.com/records/:/var/lib/bind 
+#      - ./bind_config_dnssec/sub.example.com/config/named.conf:/etc/bind/named.conf
+#      - ./bind_config_dnssec/sub.example.com/records/:/var/lib/bind 
 #    networks:
 #      internal_dns_net:
 #        ipv4_address: 172.20.0.53

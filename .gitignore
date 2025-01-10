@@ -7,13 +7,9 @@ bind_config/sub.sub.example.com/config/named.conf
 bind_config/sub.sub.delay.com/records/*.db
 bind_config/sub.sub.delay.com/config/named.conf
 
-bind_config_dnssec/sub.sub.example.com/records/*.db
-bind_config_dnssec/sub.sub.example.com/records/*.key
-bind_config_dnssec/sub.sub.example.com/records/*.private
-bind_config_dnssec/sub.sub.example.com/records/*.db.signed
-bind_config_dnssec/sub.sub.example.com/config/named.conf
-bind_config_dnssec/sub.sub.delay.com/records/*.db
-bind_config_dnssec/sub.sub.delay.com/records/*.key
-bind_config_dnssec/sub.sub.delay.com/records/*.private
-bind_config_dnssec/sub.sub.delay.com/records/*.db.signed
-bind_config_dnssec/sub.sub.delay.com/config/named.conf
+bind_config_dnssec/*/config/named.conf
+bind_config_dnssec/**/records/dsset*
+bind_config_dnssec/**/records/*.db
+bind_config_dnssec/**/records/*.key*
+bind_config_dnssec/**/records/*.private*
+bind_config_dnssec/*/records/*.db.signed
