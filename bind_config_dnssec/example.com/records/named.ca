@@ -1,6 +1,22 @@
-.                        3600000  IN  NS    X.ROOT-SERVERS.NET.
-.                        3600000  IN  NS    Y.ROOT-SERVERS.NET.
-X.ROOT-SERVERS.NET.      3600000      A     192.168.55.20
-X.ROOT-SERVERS.NET.      3600000      AAAA  2001:db8:1::40 
-Y.ROOT-SERVERS.NET.      3600000      A     192.168.55.21
-Y.ROOT-SERVERS.NET.      3600000      AAAA  2001:db8:1::41
+$ORIGIN .
+$TTL 864000
+. IN SOA x.root-servers.net. hostmaster.root-servers.net. (
+2010062304
+1h
+15m
+30d
+1h )
+  IN NS x.root-servers.net.
+  IN NS y.root-servers.net.
+
+x.root-servers.net. IN A 192.168.55.20
+x.root-servers.net. IN AAAA 2001:db8:1::20
+y.root-servers.net. IN A 192.168.55.21
+y.root-servers.net. IN AAAA 2001:db8:1::21
+
+com. IN NS ns01.com.
+com. IN NS ns02.com.
+ns01.com. IN A 192.168.55.22
+ns01.com. IN AAAA 2001:db8:1::22
+ns02.com. IN A 192.168.55.23
+ns02.com. IN AAAA 2001:db8:1::23

@@ -70,39 +70,74 @@ zone "sub{domain_number}.sub{domain_number}.{zone_suffix}" in {{
 
 for i in range(0,number_of_zone):
     domain_number = str(f"{i:06}")
-    cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.sub{domain_number}.example.com"
-    cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.sub{domain_number}.example.com"
-    cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.sub{domain_number}.example.com sub.sub.example.com{domain_number}.template.db"
-    rm_file = f"rm -f ./sub.sub.example{domain_number}.com.template.db"
 
-    #print(f"domain : sub{domain_number}.sub{domain_number}.example.com")
-    # zsk
-    p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    #print(p1.stdout)
-    zsk_private = f"{p1.stdout}.private"
-    zsk_public = f"{p1.stdout}.key"
+    # generate ksk and zsk only once, use them for all of the remaining zones
+    if i == 0:
+        cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.sub{domain_number}.example.com"
+        cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.sub{domain_number}.example.com"
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.sub{domain_number}.example.com sub.sub.example.com{domain_number}.template.db"
+        rm_file = f"rm -f ./sub.sub.example{domain_number}.com.template.db"
 
-    # ksk
-    p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    #print(p2.stdout)
-    ksk_private = f"{p2.stdout}.private"
-    ksk_public = f"{p2.stdout}.key"
+        #print(f"domain : sub{domain_number}.sub{domain_number}.example.com")
+        # zsk
+        p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        zsk_suffix = str(p1.stdout).strip().replace(f"Ksub{domain_number}.sub{domain_number}.example.com.", '')
+        zsk_public = str(p1.stdout).strip() + ".key"
+        zsk_private = str(p1.stdout).strip() + ".private"
+        
+        # ksk
+        p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        ksk_suffix = str(p2.stdout).strip().replace(f"Ksub{domain_number}.sub{domain_number}.example.com.", '')
+        ksk_public = str(p2.stdout).strip() + ".key"
+        ksk_private = str(p2.stdout).strip() + ".private"
 
-    # sing the zone
-    #print(f"print cmd {cmd_gen_signzone}")
-    p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    
-    p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    p = subprocess.run(['rm','-f', zsk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    p = subprocess.run(['rm','-f', zsk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    p = subprocess.run(['rm','-f', ksk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
-    p = subprocess.run(['rm','-f', ksk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        # sign the zone
+        #print(f"sign the zone {cmd_gen_signzone}")
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        
+        p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        #os.remove(f"../bind_config_dnssec/sub.sub.example.com/records/sub.sub.example.com{domain_number}.template.db")
+
+    else:
+        key_prefix = f"Ksub{domain_number}.sub{domain_number}.example.com."
+        
+        # copy zsk, ksk files
+        p = subprocess.run(['cp', zsk_private, f"{key_prefix}{zsk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        p = subprocess.run(['cp', zsk_public, f"{key_prefix}{zsk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        p = subprocess.run(['cp', ksk_private, f"{key_prefix}{ksk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        p = subprocess.run(['cp', ksk_public, f"{key_prefix}{ksk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+
+        # modify zsk, ksk files with sed
+        key_list = [
+            f"{key_prefix}{zsk_suffix}.private", 
+            f"{key_prefix}{zsk_suffix}.key", 
+            f"{key_prefix}{ksk_suffix}.private", 
+            f"{key_prefix}{ksk_suffix}.key", 
+        ]
+
+        for i in key_list:
+            cmd = f"sed s/sub000000.sub000000/sub{domain_number}.sub{domain_number}/g -i {i}"
+            p = subprocess.run(cmd.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        
+        # sign the zone
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.sub{domain_number}.example.com sub.sub.example.com{domain_number}.template.db"
+        rm_file = f"rm -f ./sub.sub.example{domain_number}.com.template.db"
+
+        #print(cmd_gen_signzone)
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.example.com/records")
+        #print(p3.stdout)
+
+        # remove files
+        file_path = "../bind_config_dnssec/sub.sub.example.com/records/"
+        for key in key_list:
+            os.remove(f"{file_path}{key}")
+        #os.remove(f"{file_path}/sub.sub.example.com{domain_number}.template.db")
 
 ### END: sub[6digits].sub[6digits].example.com
 
 ### START: sub[6digits].sub[6digits].delay.com
 
-# Generate zone file for sub.delay.com
+# Generate zone file for sub.sub.delay.com
 for i in range(0,number_of_zone):
     domain_number = str(f"{i:06}")
     with open(f'../bind_config_dnssec/sub.sub.delay.com/records/sub.sub.delay.com{domain_number}.template.db', 'w') as f:
@@ -162,33 +197,65 @@ zone "sub{domain_number}.sub{domain_number}.{zone_suffix_delay}" in {{
 
 for i in range(0,number_of_zone):
     domain_number = str(f"{i:06}")
-    cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.sub{domain_number}.delay.com"
-    cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.sub{domain_number}.delay.com"
-    cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.sub{domain_number}.delay.com sub.sub.delay.com{domain_number}.template.db"
-    rm_file = f"rm -f ./sub.sub.delay{domain_number}.com.template.db"
 
-    #print(f"domain : sub{domain_number}.sub{domain_number}.delay.com")
-    # zsk
-    p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    #print(p1.stdout)
-    zsk_private = f"{p1.stdout}.private"
-    zsk_public = f"{p1.stdout}.key"
+    if i == 0:
+        cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.sub{domain_number}.delay.com"
+        cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.sub{domain_number}.delay.com"
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.sub{domain_number}.delay.com sub.sub.delay.com{domain_number}.template.db"
+        rm_file = f"rm -f ./sub.sub.delay{domain_number}.com.template.db"
 
-    # ksk
-    p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    #print(p2.stdout)
-    ksk_private = f"{p2.stdout}.private"
-    ksk_public = f"{p2.stdout}.key"
+        #print(f"domain : sub{domain_number}.sub{domain_number}.delay.com")
+        # zsk
+        p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        zsk_suffix = str(p1.stdout).strip().replace(f"Ksub{domain_number}.sub{domain_number}.delay.com.", '')
+        zsk_public = str(p1.stdout).strip() + ".key"
+        zsk_private = str(p1.stdout).strip() + ".private"
+        
+        # ksk
+        p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        ksk_suffix = str(p2.stdout).strip().replace(f"Ksub{domain_number}.sub{domain_number}.delay.com.", '')
+        ksk_public = str(p2.stdout).strip() + ".key"
+        ksk_private = str(p2.stdout).strip() + ".private"
 
-    # sing the zone
-    #print(f"print cmd {cmd_gen_signzone}")
-    p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    
-    p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    p = subprocess.run(['rm','-f', zsk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    p = subprocess.run(['rm','-f', zsk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    p = subprocess.run(['rm','-f', ksk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
-    p = subprocess.run(['rm','-f', ksk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        # sing the zone
+        #print(f"print cmd {cmd_gen_signzone}")
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+
+    else:
+        key_prefix = f"Ksub{domain_number}.sub{domain_number}.delay.com."
+        
+        # copy zsk, ksk files
+        p = subprocess.run(['cp', zsk_private, f"{key_prefix}{zsk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        p = subprocess.run(['cp', zsk_public, f"{key_prefix}{zsk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        p = subprocess.run(['cp', ksk_private, f"{key_prefix}{ksk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        p = subprocess.run(['cp', ksk_public, f"{key_prefix}{ksk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+
+        # modify zsk, ksk files with sed
+        key_list = [
+            f"{key_prefix}{zsk_suffix}.private", 
+            f"{key_prefix}{zsk_suffix}.key", 
+            f"{key_prefix}{ksk_suffix}.private", 
+            f"{key_prefix}{ksk_suffix}.key", 
+        ]
+
+        for i in key_list:
+            cmd = f"sed s/sub000000.sub000000/sub{domain_number}.sub{domain_number}/g -i {i}"
+            p = subprocess.run(cmd.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        
+        # sign the zone
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.sub{domain_number}.delay.com sub.sub.delay.com{domain_number}.template.db"
+        rm_file = f"rm -f ./sub.sub.delay{domain_number}.com.template.db"
+
+        #print(cmd_gen_signzone)
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.sub.delay.com/records")
+        #print(p3.stdout)
+
+        # remove files
+        file_path = "../bind_config_dnssec/sub.sub.delay.com/records/"
+        for key in key_list:
+            os.remove(f"{file_path}{key}")
+        os.remove(f"{file_path}/sub.sub.delay.com{domain_number}.template.db")
 
 ### END: sub[6digits].sub[6digits].delay.com
 
@@ -239,33 +306,65 @@ for i in range(0,number_of_zone):
 
 for i in range(0,number_of_zone):
     domain_number = str(f"{i:06}")
-    cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.example.com"
-    cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.example.com"
-    cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.example.com sub{domain_number}.example.com.template.db"
-    rm_file = f"rm -f ./sub{domain_number}.example.com.template.db"
 
-    #print(f"domain : sub{domain_number}.example.com")
-    # zsk
-    p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    #print(p1.stdout)
-    zsk_private = f"{p1.stdout}.private"
-    zsk_public = f"{p1.stdout}.key"
+    if i == 0:
+        cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.example.com"
+        cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.example.com"
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.example.com sub{domain_number}.example.com.template.db"
+        rm_file = f"rm -f ./sub{domain_number}.example.com.template.db"
 
-    # ksk
-    p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    #print(p2.stdout)
-    ksk_private = f"{p2.stdout}.private"
-    ksk_public = f"{p2.stdout}.key"
+        #print(f"domain : sub{domain_number}.example.com")
+        # zsk
+        p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        zsk_suffix = str(p1.stdout).strip().replace(f"Ksub{domain_number}.example.com.", '')
+        zsk_public = str(p1.stdout).strip() + ".key"
+        zsk_private = str(p1.stdout).strip() + ".private"
+        
+        # ksk
+        p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        ksk_suffix = str(p2.stdout).strip().replace(f"Ksub{domain_number}.example.com.", '')
+        ksk_public = str(p2.stdout).strip() + ".key"
+        ksk_private = str(p2.stdout).strip() + ".private"
 
-    # sing the zone
-    #print(f"print cmd {cmd_gen_signzone}")
-    p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    
-    p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', zsk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', zsk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', ksk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', ksk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        # sing the zone
+        #print(f"print cmd {cmd_gen_signzone}")
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        #p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+
+    else:
+        key_prefix = f"Ksub{domain_number}.example.com."
+        
+        # copy zsk, ksk files
+        p = subprocess.run(['cp', zsk_private, f"{key_prefix}{zsk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        p = subprocess.run(['cp', zsk_public, f"{key_prefix}{zsk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        p = subprocess.run(['cp', ksk_private, f"{key_prefix}{ksk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        p = subprocess.run(['cp', ksk_public, f"{key_prefix}{ksk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+
+        # modify zsk, ksk files with sed
+        key_list = [
+            f"{key_prefix}{zsk_suffix}.private", 
+            f"{key_prefix}{zsk_suffix}.key", 
+            f"{key_prefix}{ksk_suffix}.private", 
+            f"{key_prefix}{ksk_suffix}.key", 
+        ]
+
+        for i in key_list:
+            cmd = f"sed s/sub000000/sub{domain_number}/g -i {i}"
+            p = subprocess.run(cmd.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        
+        # sign the zone
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.example.com sub{domain_number}.example.com.template.db"
+        rm_file = f"rm -f ./sub.example{domain_number}.com.template.db"
+
+        #print(cmd_gen_signzone)
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        #print(p3.stdout, p3.stderr)
+
+        # remove files
+        file_path = "../bind_config_dnssec/sub.example.com/records/"
+        for key in key_list:
+            os.remove(f"{file_path}{key}")
+        #os.remove(f"{file_path}/sub.sub.example.com{domain_number}.template.db")
 
 # Generate named.conf for sub[6digits].example.com and sub[6digits].delay.com
 
@@ -351,33 +450,65 @@ for i in range(0,number_of_zone):
 
 for i in range(0,number_of_zone):
     domain_number = str(f"{i:06}")
-    cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.delay.com"
-    cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.delay.com"
-    cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.delay.com sub{domain_number}.delay.com.template.db"
-    rm_file = f"rm -f ./sub{domain_number}.delay.com.template.db"
 
-    #print(f"domain : sub{domain_number}.delay.com")
-    # zsk
-    p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    #print(p1.stdout)
-    zsk_private = f"{p1.stdout}.private"
-    zsk_public = f"{p1.stdout}.key"
+    if i == 0:
+        cmd_gen_zsk = f"dnssec-keygen -a RSASHA256 -b 1024 sub{domain_number}.delay.com"
+        cmd_gen_ksk = f"dnssec-keygen -a RSASHA256 -b 2048 -f KSK sub{domain_number}.delay.com"
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.delay.com sub{domain_number}.delay.com.template.db"
+        rm_file = f"rm -f ./sub{domain_number}.delay.com.template.db"
 
-    # ksk
-    p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    #print(p2.stdout)
-    ksk_private = f"{p2.stdout}.private"
-    ksk_public = f"{p2.stdout}.key"
+        #print(f"domain : sub{domain_number}.delay.com")
+        # zsk
+        p1 = subprocess.run(cmd_gen_zsk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        zsk_suffix = str(p1.stdout).strip().replace(f"Ksub{domain_number}.delay.com.", '')
+        zsk_public = str(p1.stdout).strip() + ".key"
+        zsk_private = str(p1.stdout).strip() + ".private"
+        
+        # ksk
+        p2 = subprocess.run(cmd_gen_ksk.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        ksk_suffix = str(p2.stdout).strip().replace(f"Ksub{domain_number}.delay.com.", '')
+        ksk_public = str(p2.stdout).strip() + ".key"
+        ksk_private = str(p2.stdout).strip() + ".private"
+        
+        # sing the zone
+        #print(f"print cmd {cmd_gen_signzone}")
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        #p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
 
-    # sing the zone
-    #print(f"print cmd {cmd_gen_signzone}")
-    p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    
-    p = subprocess.run(rm_file.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', zsk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', zsk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', ksk_private], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
-    p = subprocess.run(['rm','-f', ksk_public], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+    else:
+        key_prefix = f"Ksub{domain_number}.delay.com."
+        
+        # copy zsk, ksk files
+        p = subprocess.run(['cp', zsk_private, f"{key_prefix}{zsk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        p = subprocess.run(['cp', zsk_public, f"{key_prefix}{zsk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        p = subprocess.run(['cp', ksk_private, f"{key_prefix}{ksk_suffix}.private"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        p = subprocess.run(['cp', ksk_public, f"{key_prefix}{ksk_suffix}.key"], capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+
+        # modify zsk, ksk files with sed
+        key_list = [
+            f"{key_prefix}{zsk_suffix}.private", 
+            f"{key_prefix}{zsk_suffix}.key", 
+            f"{key_prefix}{ksk_suffix}.private", 
+            f"{key_prefix}{ksk_suffix}.key", 
+        ]
+
+        for i in key_list:
+            cmd = f"sed s/sub000000/sub{domain_number}/g -i {i}"
+            p = subprocess.run(cmd.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        
+        # sign the zone
+        cmd_gen_signzone = f"dnssec-signzone -e 20501231000000 -S -o sub{domain_number}.delay.com sub{domain_number}.delay.com.template.db"
+        rm_file = f"rm -f ./sub.example{domain_number}.com.template.db"
+
+        #print(cmd_gen_signzone)
+        p3 = subprocess.run(cmd_gen_signzone.split(), capture_output=True, text=True, cwd="../bind_config_dnssec/sub.example.com/records")
+        #print(p3.stdout, p3.stderr)
+
+        # remove files
+        file_path = "../bind_config_dnssec/sub.example.com/records/"
+        for key in key_list:
+            os.remove(f"{file_path}{key}")
+        #os.remove(f"{file_path}/sub.sub.example.com{domain_number}.template.db")
 
 # Generate named.conf for sub[6digits].example.com
 
@@ -394,19 +525,19 @@ zone "{zone_prefix}{domain_number}.{zone_suffix_delay}" in {{
 
 ### END: sub[6digits].delay.com
 
-### START : remove unwanted files
-
-rm_cmd = [
-"tree -if ../bind_config_dnssec/sub.sub.example.com/records/ |egrep 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-"tree -if ../bind_config_dnssec/sub.sub.delay.com/records/ |egrep 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-"tree -if ../bind_config_dnssec/sub.example.com/records/ |egrep 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-"tree -if ../bind_config_dnssec/sub.delay.com/records/ |egrep 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-]
-
-for i in rm_cmd:
-    os.system(i)
-
-### END : remove unwanted files
+#### START : remove unwanted files
+#
+#rm_cmd = [
+#"tree -if ../bind_config_dnssec/sub.sub.example.com/records/ |egrep 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.sub.delay.com/records/ |egrep 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.example.com/records/ |egrep 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.delay.com/records/ |egrep 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#]
+#
+#for i in rm_cmd:
+#    os.system(i)
+#
+#### END : remove unwanted files
 
 ### START : eaxmple.com, delay.com
 
