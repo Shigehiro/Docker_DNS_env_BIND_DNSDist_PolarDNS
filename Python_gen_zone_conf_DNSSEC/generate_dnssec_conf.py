@@ -528,10 +528,10 @@ zone "{zone_prefix}{domain_number}.{zone_suffix_delay}" in {{
 #### START : remove unwanted files
 #
 #rm_cmd = [
-#"tree -if ../bind_config_dnssec/sub.sub.example.com/records/ |egrep 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-#"tree -if ../bind_config_dnssec/sub.sub.delay.com/records/ |egrep 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-#"tree -if ../bind_config_dnssec/sub.example.com/records/ |egrep 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
-#"tree -if ../bind_config_dnssec/sub.delay.com/records/ |egrep 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.sub.example.com/records/ |grep -E 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.sub.delay.com/records/ |grep -E 'dsset|template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.example.com/records/ |grep -E 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
+#"tree -if ../bind_config_dnssec/sub.delay.com/records/ |grep -E 'template|.key|.private' | grep -v signed | xargs -I{} rm {}",
 #]
 #
 #for i in rm_cmd:
@@ -866,8 +866,8 @@ zone  "." in {
 ### START : remove unwanted files
 
 rm_cmd = [
-"tree -if ../bind_config_dnssec/com/records/ |egrep 'dsset|com.db|.key|.private' | grep -v signed | xargs -I{} rm {}",
-"tree -if ../bind_config_dnssec/root/records/ |egrep 'root.db' | grep -v signed | xargs -I{} rm {}",
+"tree -if ../bind_config_dnssec/com/records/ |grep -E 'dsset|com.db|.key|.private' | grep -v signed | xargs -I{} rm {}",
+"tree -if ../bind_config_dnssec/root/records/ |grep -E 'root.db' | grep -v signed | xargs -I{} rm {}",
 ]
 
 for i in rm_cmd:

@@ -29,3 +29,5 @@ cp ./named.ca ../bind_config_dnssec/com/records
 tree -if ../bind_config_dnssec/com/ |grep -E  'named.conf' | xargs -I{} rm -rf {}
 tree -if ../bind_config_dnssec/root/ |grep -E  'named.conf' | xargs -I{} rm -rf {}
 tree -if ../bind_config_dnssec/root/records |grep -E  'dsset|signed|key|private|root.db' | xargs -I{} rm -rf {}
+
+mkdir ../bind_config_dnssec/root/records
