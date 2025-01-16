@@ -104,7 +104,7 @@ for i in range(start, end):
         file_path = "../bind_config_dnssec/sub.sub.delay.com/records/"
         for key in key_list:
             os.remove(f"{file_path}{key}")
-        os.remove(f"{file_path}/sub.sub.delay.com{domain_number}.template.db")
+        #os.remove(f"{file_path}/sub.sub.delay.com{domain_number}.template.db")
 
 ### END: sub[6digits].sub[6digits].delay.com
 
