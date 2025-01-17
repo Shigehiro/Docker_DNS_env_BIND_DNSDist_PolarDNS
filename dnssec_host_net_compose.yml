@@ -60,7 +60,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_com01.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_com01.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.22:53:53/udp"
@@ -79,7 +79,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_com02.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_com02.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.23:53:53/udp"
@@ -146,7 +146,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_example01.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_example01.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.24:53:53/udp"
@@ -165,7 +165,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_example02.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_example02.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.25:53:53/udp"
@@ -232,7 +232,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_sub_example01.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_sub_example01.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.28:53:53/udp"
@@ -251,7 +251,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_sub_example02.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_sub_example02.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.29:53:53/udp"
@@ -318,7 +318,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_sub_sub_example01.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_sub_sub_example01.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.59:53:53/udp"
@@ -337,7 +337,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_sub_sub_example02.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_sub_sub_example02.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.60:53:53/udp"
@@ -408,7 +408,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_sub_sub_delay01.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_sub_sub_delay01.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.61:53:53/udp"
@@ -427,7 +427,7 @@ services:
       context: ./Docker_build/DNSDist
       dockerfile: Dockerfile
     volumes:
-      - ./bind_config/dnsdist/dnsdist_sub_sub_delay02.conf:/dnsdist.conf
+      - ./bind_config_dnssec/dnsdist/dnsdist_sub_sub_delay02.conf:/dnsdist.conf
     network_mode: "host"
 #    ports:
 #    - "192.168.55.62:53:53/udp"
