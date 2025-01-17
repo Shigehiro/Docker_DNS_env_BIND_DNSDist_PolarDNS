@@ -5,6 +5,7 @@
   - [Genrate config](#genrate-config)
   - [Dig samples against PolarDNS (broken.com)](#dig-samples-against-polardns-brokencom)
   - [Add latency on the dnsdist](#add-latency-on-the-dnsdist)
+  - [Set up DNSSEC environment](#set-up-dnssec-environment)
 
 ## Description
 
@@ -63,5 +64,56 @@ Edit dnsdist.conf and restart the dnsdist container to reflect that.
 ```
 $ grep -i delay bind_config/dnsdist/dnsdist_com.conf
 -- If you would like to add the delay, enable the below
--- addAction(AllRule(), DelayAction(100))
+addAction(AllRule(), DelayAction(100))
+```
+
+## Set up DNSSEC environment
+
+```
+$ cd Python_gen_zone_conf_DNSSEC/
+```
+
+Edit gen_script.py as you like.
+```
+$ grep -E '^start|^end|^step' gen_script.py
+start = 0
+end = 300000
+step = 50000
+```
+
+In the above case, a total of **600,000 zones** will be generated, ranging from **sub000000.sub000000.example|delay.com** to **sub299999.sub299999.example|delay.com**, with secured zones.<br>
+Run the script.
+```
+$ ./gen_script.py
+```
+
+The python script will generate three shell scipts as below.
+```
+$ ls *0[1-3]*.sh
+gen_dnssec_conf_01.sh  gen_dnssec_conf_02.sh  gen_dnssec_conf_03.sh
+```
+
+Run the first script and wait until the script completes.  
+This script spawns some processes in the background, so make sure the processes have completed using `ps` or another similar tool.
+```
+./gen_dnssec_conf_01.sh
+```
+
+Run the second and, lastly the third script and start the containers.
+```
+./gen_dnssec_conf_02.sh
+```
+
+```
+./gen_dnssec_conf_03.sh
+```
+
+```
+cd ..
+docker compose -f dnssec_host_net_compose.yml up -d
+```
+
+Add the key on a full resolver so that the server can validate queries.
+```
+$ grep '257 3 8' bind_config_dnssec/root/records/*.key
 ```

@@ -4,7 +4,7 @@ zone_prefix = 'sub'
 zone_suffix = 'example.com'
 zone_suffix_polardns = 'broken.com'
 zone_suffix_delay = 'delay.com'
-number_of_zone = 100000
+number_of_zone = 10
 
 # Generate zone file for example.com
 with open('../bind_config/example.com/records/example.com.template.db', 'w') as f:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 zone_suffix = 'delay.com'
-number_of_zone = 100000
+number_of_zone = 10
 
 # Generate zone file for sub.delay.com
 with open('../bind_config/sub.sub.delay.com/records/sub.sub.delay.com.template.db', 'w') as f:

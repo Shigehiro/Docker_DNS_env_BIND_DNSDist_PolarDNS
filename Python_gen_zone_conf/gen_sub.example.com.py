@@ -4,7 +4,7 @@ zone_prefix = 'sub'
 zone_suffix = 'example.com'
 zone_suffix_polardns = 'broken.com'
 zone_suffix_delay = 'delay.com'
-number_of_zone = 100000
+number_of_zone = 10
 
 # Generate zone file for sub.example.com
 for i in range(0,number_of_zone):
