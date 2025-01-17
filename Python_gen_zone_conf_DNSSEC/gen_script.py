@@ -10,21 +10,20 @@ step = 10
 
 with open('gen_dnssec_conf_01.sh', 'w') as f:
     f.write("#!/bin/sh\n\n")
-    f.write("# script01\n")
     for i in range(0, end, step):
         str01 = f"python3 ./generate_sub.sub.example.com.py -s {i} -e {i+step} &"
         str02 = f"python3 ./generate_sub.sub.delay.com.py -s {i} -e {i+step} &"
         f.write(f"{str01}\n")
         f.write(f"{str02}\n")
 
-with open('gen_dnssec_conf_02.sh', 'a') as f:
-    f.write("\n# script02\n")
+with open('gen_dnssec_conf_02.sh', 'w') as f:
+    f.write("#!/bin/sh\n\n")
     for i in range(0, end, step):
         str01 = f"python3 ./generate_sub.sub.delay.com_02.py -s {start} -e {end} &"
         f.write(f"{str01}\n")
 
-with open('gen_dnssec_conf_03.sh', 'a') as f:
-    f.write("\n# script03\n")
+with open('gen_dnssec_conf_03.sh', 'w') as f:
+    f.write("#!/bin/sh\n\n")
     str01 = f"python3 ./generate_com_root_named.conf.py -s {start} -e {end}"
     f.write(f"{str01}\n")
 
